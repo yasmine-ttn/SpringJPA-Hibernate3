@@ -3,6 +3,7 @@ package com.example.demo;
 import com.example.demo.entities.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,81 +11,91 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+
 @SpringBootTest
-class DemoApplicationTests {
+public class DemoApplicationTests {
 @Autowired
-	EmployeeRepository repository;
+EmployeeRepository repository;
 	@Test
 	void contextLoads() {
 	}
 	@Test
-	public void testCreate()
+	public void testEmployeeCreate()
 	{
 		Employee employee=new Employee();
-		employee.setId(5);
-		employee.setName("Kenny");
-		employee.setAge(20);
-		employee.setLoc("U Block");
+
+		employee.setFirstName("Roger");
+		employee.setLastName("Kendrik");
+		employee.setAge(50);
+		employee.setSalary(50000.00);
 		repository.save(employee);
+
+		Employee employee1=new Employee();
+
+		employee1.setFirstName("Pumba");
+		employee1.setLastName("Mufasa");
+		employee1.setAge(55);
+		employee1.setSalary(2000.00);
+		repository.save(employee1);
 	}
+@Test
+	public void testFindAllEmployees()
+{
+	System.out.println(repository.findAllEmployees());
+}
 	@Test
-	public void testRead()
+	public void testFindAllSortedEmployees()
 	{
-		Employee employee=repository.findById(1).get();
-		assertNotNull(employee);
-		assertEquals("Kenny",employee.getName());
-		System.out.println(employee.getName()+" "+employee.getAge()+" "+employee.getLoc());
-	}
-	@Test
-	public void testUpdate()
-	{
-		Employee employee=repository.findById(1).get();
-		employee.setLoc("A Block");
-		repository.save(employee);
-	}
-	@Test
-	public void testDelete() {
-		if (repository.existsById(1)) {
-			System.out.println("Deleting an employee");
-			repository.deleteById(1);
+		List<Object[]> partData=repository.findAllSortedEmployees();
+		for(Object[] objects:partData)
+		{
+			System.out.println(objects[0]);
+			System.out.println(objects[1]);
 		}
 	}
 	@Test
-	public void testCount()
+	public void testFindAllFilteredEmployees()
 	{
-		System.out.println("Total number of employees: "+repository.count());
+		List<Object[]> partData=repository.findAllFilteredEmployees();
+		for(Object[] objects:partData)
+		{
+			System.out.println(objects[0]);
+			System.out.println(objects[1]);
+			System.out.println(objects[2]);
+		}
 	}
 	@Test
-	public void testFindByNameLike()
+	@Transactional
+	@Rollback(value = false)
+	public void testDeleteEmployeeByMinSalary()
 	{
-		List<Employee> employeeList=repository.findByNameLike("A%");
-		employeeList.forEach(p-> System.out.println(p.getName()));
+		repository.deleteEmployeeByMinSalary();
 	}
-	@Test
-	public void testFindAgeBetween()
-	{
-		List<Employee> employeeList=repository.findByAgeBetween(28,32);
-		employeeList.forEach(p-> System.out.println(p.getName()));
-	}
-//	@Test
-//	public void testFindAllPaging()
-//	{
-//		Pageable pageable= PageRequest.of(0, 3, Sort.by("age"));
-//		Page<Employee> results=repository.findAll(pageable);
-//		results.forEach((p-> System.out.println(p.getAge())));
-//
-//	}
-@Test
-public void testFindByName()
-{
-  List<Employee> employeeList=	repository.findByName("Penny");
-  employeeList.forEach(e-> System.out.println(e.getAge()));
-}
 
+//		@Test
+//	@Transactional
+//		@Rollback(value = false)
+//		public void testUpdateEmployeeBySalary()
+//	{
+//		repository.updateEmployeeBySalary(50000.00);
+//	}
+
+		@Test
+	@Transactional
+		@Rollback(value = false)
+		public void testDeleteEmployeeWithAge()
+	{
+		repository.deleteEmployeeWithAge(45);
+	}
 }

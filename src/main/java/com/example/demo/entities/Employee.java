@@ -1,51 +1,70 @@
 package com.example.demo.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
-@Table
+@Table(name="employee")
 public class Employee {
     @Id
-    private int id;
-    private int age;
-    private String name;
-    @Column(name="location")
-    private String loc;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+   private int id;
+    @Column(name="empFirstName")
+   private String firstName;
 
-    public void setName(String name) {
-        this.name = name;
+
+    @Column(name="empLastName")
+    private String lastName;
+    @Column(name="empSalary")
+   private double salary;
+    @Column(name="empAge")
+   private int age;
+
+
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setLoc(String loc) {
-        this.loc = loc;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public String getLoc() {
-        return loc;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public String getLastName() {
+        return lastName;
     }
 
-    public int getId() {
-        return id;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
     }
 
     public int getAge() {
         return age;
     }
 
-    public String getName() {
-        return name;
+    public void setAge(int age) {
+        this.age = age;
     }
-
-
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                '}';
+    }
 }
