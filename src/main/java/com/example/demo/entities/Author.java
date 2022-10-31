@@ -1,6 +1,7 @@
 package com.example.demo.entities;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 @Entity
@@ -10,16 +11,17 @@ public class Author {
     private int id;
     private String firstName;
     private String lastName;
-//    @OneToOne(cascade=CascadeType.PERSIST)
-//    private Set<Subject> subjects;
+    @OneToMany(mappedBy = "author",cascade=CascadeType.PERSIST)
+    @Size(min=3)
+    private Set<Subject> subjects;
 
-//    public Set<Subject> getSubjects() {
-//        return subjects;
-//    }
-//
-//    public void setSubjects(Set<Subject> subjects) {
-//        this.subjects = subjects;
-//    }
+    public Set<Subject> getSubjects() {
+        return subjects;
+    }
+
+    public void setSubjects(Set<Subject> subjects) {
+        this.subjects = subjects;
+    }
 
 
     @ManyToMany(cascade = CascadeType.ALL)
